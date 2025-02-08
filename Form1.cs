@@ -5,14 +5,14 @@ namespace GeneticPractice
 {
     public partial class Form1 : Form
     {
-        private int popSize = 400;
+        private int popSize = 200;
         private int finishSide = 20;
         private int epoch = 0;
 
         private Vector2 startPosition;
         private Vector2 finishPosition;
 
-        private Population population;
+        private List<Population> populations;
 
         private Bitmap buffer;
 
@@ -21,8 +21,10 @@ namespace GeneticPractice
         private Brush DotBrush;
 
         private Color BGColor;
-        private Color DotColor;
         private Color FinishColor = Color.FromArgb(0, 255, 0);
+
+        // TODO: processing elitism
+        // TODO: refine the fitness function
 
         public Form1()
         {
@@ -36,8 +38,11 @@ namespace GeneticPractice
 
             startPosition = new Vector2(PicBox.Size.Width / 2, PicBox.Size.Height - 20);
             finishPosition = new Vector2(PicBox.Size.Width / 2, 20);
-            population = new Population(popSize, startPosition, finishPosition);
 
+            populations = new List<Population>() { 
+                new Population(popSize, startPosition, finishPosition, Color.White, SelectionType.BestDot, CrossoverType.None, true),
+                new Population(popSize, startPosition, finishPosition, Color.SkyBlue, SelectionType.Tournament, CrossoverType.Uniform, false)            
+            };
 
             moveTimer = new System.Windows.Forms.Timer();
             moveTimer.Interval = 10;
@@ -55,17 +60,14 @@ namespace GeneticPractice
             {
                 case 'd':
                     BGColor = Color.DimGray;
-                    DotColor = Color.White;
                     break;
                 case 'w':
                     BGColor = Color.WhiteSmoke;
-                    DotColor = Color.Black;
                     break;
                 default: break;
             }
 
             BackColor = BGColor;
-            DotBrush = new SolidBrush(DotColor);
         }
 
         private void StartMoveDot()
@@ -77,14 +79,18 @@ namespace GeneticPractice
 
         private void LogicInTick()
         {
-            if (!population.AllDotsDead())
+            if (!IsAllPopDotsDead(populations))
             {
-                CheckDotStatus(population);
-                population.Move();
-
                 ClearBuffer();
                 DrawFinish();
-                DrawDots(population);
+
+                foreach (Population population in populations)
+                {
+                    CheckDotStatus(population);
+                    population.Move();
+
+                    DrawDots(population);
+                }
 
                 PicBox.Image = buffer;
                 PicBox.Refresh();
@@ -94,8 +100,8 @@ namespace GeneticPractice
                 EpochLabelUpdate();
                 MinStepLabelUpdate();
 
-                population.SelectionBestDot();
-                population.Mutation();
+                foreach (Population population in populations)
+                    population.Genetic();
             }
         }
 
@@ -107,13 +113,14 @@ namespace GeneticPractice
 
         private void MinStepLabelUpdate()
         {
-            int min = population.dotBrainSize + 1;
+            int min = populations[0].dotBrainSize + 1;
 
-            foreach (Dot dot in population.dots)
-                if (dot.isFinish && dot.step < min)
-                    min = dot.step;
+            foreach (Population population in populations)
+                foreach (Dot dot in population.dots)
+                    if (dot.isFinish && dot.step < min)
+                        min = dot.step;
 
-            if (min == population.dotBrainSize + 1)
+            if (min == populations[0].dotBrainSize + 1)
                 lbMinStep.Text = $"Min step: no one finished";
             else
                 lbMinStep.Text = $"Min step: {min}";
@@ -127,7 +134,7 @@ namespace GeneticPractice
                 {
                     dot.isLive = false;
                     dot.position = new Vector2(MathF.Max(MathF.Min(dot.position[0], PicBox.Width - 3), 0),   // (-3) Helps to display the collision 
-                                               MathF.Max(MathF.Min(dot.position[1], PicBox.Height - 3), 0)); // with the right and bottom edges clearly
+                                                MathF.Max(MathF.Min(dot.position[1], PicBox.Height - 3), 0)); // with the right and bottom edges clearly
                 }
 
                 if (IsDotInFinish(dot))
@@ -159,6 +166,14 @@ namespace GeneticPractice
             return false;
         }
 
+        private bool IsAllPopDotsDead(List<Population> pop)
+        {
+            foreach (Population population in pop)
+                if (!population.AllDotsDead())
+                    return false;
+            return true;
+        }
+
         private void ClearBuffer()
         {
             using Graphics g = Graphics.FromImage(buffer);
@@ -180,7 +195,7 @@ namespace GeneticPractice
             for (int i = 0; i < pop.dots.Count; i++)
             {
                 Vector2 pos = pop.dots[i].position;
-                g.FillEllipse(DotBrush, pos[0] - side / 2, pos[1] - side / 2, side, side);
+                g.FillEllipse(pop.dotBrush, pos[0] - side / 2, pos[1] - side / 2, side, side);
             }
         }
     }

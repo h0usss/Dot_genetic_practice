@@ -12,23 +12,34 @@ namespace GeneticPractice
     {
         public List<Dot> dots { get; private set; }
         public int dotBrainSize;
+        public Brush dotBrush;
 
+        private SelectionType selection;
+        private CrossoverType crossover;
         private Vector2 finishPos;
         private Vector2 startPos;
         private List<Dot> elite;
         private Random random;
-        private bool isUseElite = true;
+        private Color dotColor;
+        private bool isUseElite;
         private int eliteCount = 2;
         private int chanceMutation = 1;
         private int chanceCrosover = 90;
+        private int countParticipent = 3;
         private int popSize;
 
-        public Population(int popSize, Vector2 startPos, Vector2 finishPos)
+        public Population(int popSize, Vector2 startPos, Vector2 finishPos, Color dotColor, SelectionType selection, CrossoverType crossover, bool isUseElite = false)
         {
-            random = new Random();
+            this.isUseElite = isUseElite;
+            this.selection = selection;
+            this.crossover = crossover; 
             this.finishPos = finishPos;
+            this.dotColor = dotColor;
             this.startPos = startPos;
             this.popSize = popSize;
+
+            random = new Random();
+            dotBrush = new SolidBrush(dotColor);
 
             dots = new List<Dot>();
             for (int i = 0; i < popSize; i++)
@@ -43,6 +54,30 @@ namespace GeneticPractice
                 dots[i].Move();
                 dots[i].minDistance = MathF.Min(dots[i].minDistance, MathF.Abs((dots[i].position - finishPos).Length()));
             }
+        }
+
+        //private void CheckSettings()
+        //{
+        //    if ()
+        //}
+
+        public void Genetic()
+        {            
+            switch (selection)
+            {
+                case SelectionType.Tournament: SelectionTourney(); break;
+                case SelectionType.BestDot:    SelectionBestDot(); break;
+                default: throw new Exception("Unrealized selection!");
+            }
+
+            switch (crossover)
+            {
+                case CrossoverType.Uniform: CrossoverUniform(); break;
+                case CrossoverType.None: break;
+                default: throw new Exception("Unrealized crossover!");
+            }
+
+            Mutation();
         }
 
         public float Fitnes(Dot dot)
@@ -83,7 +118,7 @@ namespace GeneticPractice
             dots = newDots;
         }
 
-        public void SelectionTourney(int countParticipent)
+        public void SelectionTourney() 
         {
             int countAddInNewPop = dots.Count;
             List<Dot> newDots = new List<Dot>();
@@ -105,7 +140,7 @@ namespace GeneticPractice
             dots = newDots;
         }
 
-        public void CrisoverUniform()
+        public void CrossoverUniform()
         {
             for (int i = 0; i < dots.Count; i += 2)
                 if (random.Next(1, 101) <= chanceCrosover)
@@ -135,5 +170,16 @@ namespace GeneticPractice
                     return false;
             return true;
         }
+    }
+    public enum SelectionType
+    {
+        BestDot,
+        Tournament,
+    }
+
+    public enum CrossoverType
+    {
+        None,
+        Uniform,
     }
 }
