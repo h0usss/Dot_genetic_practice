@@ -10,23 +10,28 @@ namespace GeneticPractice
 {
     internal class Population
     {
-        public List<Dot> dots { get; private set; }
-        public int dotBrainSize;
         public Brush dotBrush;
+        public Color dotColor;
+        public int dotBrainSize;
+        public List<Dot> dots { get; private set; }
 
         private SelectionType selection;
         private CrossoverType crossover;
-        private Vector2 finishPos;
+
         private Vector2 startPos;
-        private List<Dot> elite;
+        private Vector2 finishPos;
+
         private Random random;
-        private Color dotColor;
+
+        private List<Dot> elite;
+
         private bool isUseElite;
+
+        private int popSize;
         private int eliteCount = 2;
         private int chanceMutation = 1;
         private int chanceCrosover = 90;
         private int countParticipent = 3;
-        private int popSize;
 
         public Population(int popSize, Vector2 startPos, Vector2 finishPos, Color dotColor, SelectionType selection, CrossoverType crossover, bool isUseElite = false)
         {
@@ -45,6 +50,7 @@ namespace GeneticPractice
             for (int i = 0; i < popSize; i++)
                 dots.Add(new Dot(startPos));
             dotBrainSize = dots[0].brain.sizeBrain;
+
         }
 
         public void Move()
@@ -55,11 +61,6 @@ namespace GeneticPractice
                 dots[i].minDistance = MathF.Min(dots[i].minDistance, MathF.Abs((dots[i].position - finishPos).Length()));
             }
         }
-
-        //private void CheckSettings()
-        //{
-        //    if ()
-        //}
 
         public void Genetic()
         {            
@@ -80,22 +81,19 @@ namespace GeneticPractice
             Mutation();
         }
 
-        public float Fitnes(Dot dot)
+        public static float Fitnes(Dot dot)
         {
-            int finishBonus = 2000 * (dot.isFinish ? 1 : 0);
             float distanceBonus = 0;
-            int stepBonus = 0;
-
-            if (dot.minDistance > 0)
-            {
-                if (!dot.isFinish)
-                    distanceBonus = 500 * (1 / dot.minDistance);
-            }
-            else
-                distanceBonus = 500;
+            float stepBonus = 0;
+            int finishBonus = 0;
 
             if (dot.isFinish)
-                stepBonus = 10000 * 1 / dot.step;
+            {
+                finishBonus = 500;
+                stepBonus = 1000f * 1f / dot.step;
+            }
+            else
+                distanceBonus = 400f * 1f / dot.minDistance;
 
             return finishBonus + distanceBonus + stepBonus;
         }
@@ -106,6 +104,7 @@ namespace GeneticPractice
             
             int countNewDots = isUseElite ? dots.Count - eliteCount : dots.Count;
             List<Dot> newDots = new List<Dot>();
+
             if (isUseElite)
                 elite = new List<Dot>();
 
@@ -120,8 +119,9 @@ namespace GeneticPractice
 
         public void SelectionTourney() 
         {
-            int countAddInNewPop = dots.Count;
+            int countAddInNewPop = isUseElite ? dots.Count - eliteCount : dots.Count;
             List<Dot> newDots = new List<Dot>();
+
 
             for (int i = 0; i < countAddInNewPop; i++)
             {
@@ -135,6 +135,14 @@ namespace GeneticPractice
 
                 individuals.Sort((x, y) => Fitnes(y).CompareTo(Fitnes(x)));
                 newDots.Add(individuals[0].Copy());
+            }
+
+            if (isUseElite)
+            {
+                elite = new List<Dot>();
+                dots.Sort((x, y) => Fitnes(y).CompareTo(Fitnes(x)));
+                for (int i = 0; i < eliteCount; i++)
+                    elite.Add(dots[i].Copy());
             }
 
             dots = newDots;
