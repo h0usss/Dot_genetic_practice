@@ -11,7 +11,8 @@ namespace GeneticPractice
         private int finishSide = 20;
         private int startSide = 20;
         private int epoch = 1;
-
+        private int countPop;
+                
         private bool isDrawing = false;
         private bool isFirst = true;
 
@@ -33,7 +34,6 @@ namespace GeneticPractice
         private Color FinishColor = Color.FromArgb(0, 255, 0);
         private Color StartColor = Color.FromArgb(200, 200, 200);
 
-        // TODO: A list for creating populations and choosing brain
         // TODO: drawing barrier
         // TODO: New Selection, Crossover
 
@@ -41,6 +41,7 @@ namespace GeneticPractice
         {
             InitializeComponent();
 
+            countPop = 0;
             DoubleBuffered = true;
 
             BGColor = PicBox.BackColor;
@@ -61,12 +62,35 @@ namespace GeneticPractice
             };
         }
 
+        private void btnNewPop_Click(object sender, EventArgs e)
+        {
+            PopulationInfo popin = new PopulationInfo();
+            int locY = countPop == 0 ? 0 : countPop * popin.Height + 4;
+
+            popin.Location = new Point(0, locY);
+            popin.Size = new Size(panPopulations.Width - 17, popin.Height); // (-17) For vertical scrolling, so that the horizontal 
+            popin.SetPopName($"Population{countPop + 1}");                 //        one does not appear
+            
+            btnNewPop.Location = new Point(0, btnNewPop.Location.Y + popin.Height + 4);
+            countPop++;
+
+            panPopulations.Controls.Add(popin);
+        }
+
         private void CreatePopulations()
         {
-            populations = new List<Population>() {
-                new Population(popSize, startPosition, finishPosition, Color.White, SelectionType.BestDot, CrossoverType.None, true),
-                new Population(popSize, startPosition, finishPosition, Color.SkyBlue, SelectionType.Tournament, CrossoverType.Uniform, true)
-            };
+            populations = new List<Population>();
+            foreach (Control control in panPopulations.Controls)
+                if (control is PopulationInfo popinfo)
+                    populations.Add(new Population(
+                        popinfo.GetName(),
+                        popinfo.GetSize(),
+                        startPosition,
+                        finishPosition,
+                        popinfo.GetColor(),
+                        popinfo.GetSelection(),
+                        popinfo.GetCrossover(),
+                        popinfo.GetElite()));
         }
 
         private void LogicInTick()
@@ -90,7 +114,7 @@ namespace GeneticPractice
             else
             {
                 EpochLabelUpdate();
-                StepColorLabelUpdate();
+                InfoLabelUpdate();
 
                 foreach (Population population in populations)
                     population.Genetic();
@@ -103,10 +127,11 @@ namespace GeneticPractice
             lbEpochCount.Text = $"Epoch: {epoch}";
         }
 
-        private void StepColorLabelUpdate()
+        private void InfoLabelUpdate()
         {
             int min = populations[0].dotBrainSize + 1;
             Color color = Color.FromArgb(0, 0, 0, 0);
+            string name = "";
 
             foreach (Population population in populations)
                 foreach (Dot dot in population.dots)
@@ -114,16 +139,16 @@ namespace GeneticPractice
                     {
                         min = dot.step;
                         color = population.dotColor;
+                        name = population.name;
                     }
 
             if (min == populations[0].dotBrainSize + 1)
-            {
                 lbMinStep.Text = "Min step: no one finished";
-            }
             else
             {
                 lbMinStep.Text = $"Min step: {min}";
-                lbType.Text = $"Color: {color.Name}";
+                panColor.BackColor = color;
+                lbName.Text = $"Name: {name}";
             }
         }
 

@@ -13,6 +13,7 @@ namespace GeneticPractice
         public Brush dotBrush;
         public Color dotColor;
         public int dotBrainSize;
+        public string name;
         public List<Dot> dots { get; private set; }
 
         private SelectionType selection;
@@ -28,20 +29,20 @@ namespace GeneticPractice
         private bool isUseElite;
 
         private int popSize;
-        private int eliteCount = 2;
+        private int eliteCount;
         private int chanceMutation = 1;
         private int chanceCrosover = 90;
         private int countParticipent = 3;
 
-        public Population(int popSize, Vector2 startPos, Vector2 finishPos, Color dotColor, SelectionType selection, CrossoverType crossover, bool isUseElite = false)
+        public Population(string name, int popSize, Vector2 startPos, Vector2 finishPos, Color dotColor, SelectionType selection, CrossoverType crossover, int eliteCount = 0)
         {
-            this.isUseElite = isUseElite;
             this.selection = selection;
             this.crossover = crossover; 
             this.finishPos = finishPos;
             this.dotColor = dotColor;
             this.startPos = startPos;
             this.popSize = popSize;
+            this.name = name;
 
             random = new Random();
             dotBrush = new SolidBrush(dotColor);
@@ -51,6 +52,13 @@ namespace GeneticPractice
                 dots.Add(new Dot(startPos));
             dotBrainSize = dots[0].brain.sizeBrain;
 
+            if (eliteCount == 0)
+                isUseElite = false;
+            else
+            {
+                isUseElite = true;
+                this.eliteCount = eliteCount;
+            }
         }
 
         public void Move()
@@ -178,16 +186,5 @@ namespace GeneticPractice
                     return false;
             return true;
         }
-    }
-    public enum SelectionType
-    {
-        BestDot,
-        Tournament,
-    }
-
-    public enum CrossoverType
-    {
-        None,
-        Uniform,
     }
 }
