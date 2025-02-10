@@ -1,5 +1,7 @@
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
+using System.Windows.Forms;
 
 namespace GeneticPractice
 {
@@ -7,7 +9,11 @@ namespace GeneticPractice
     {
         private int popSize = 200;
         private int finishSide = 20;
+        private int startSide = 20;
         private int epoch = 1;
+
+        private bool isDrawing = false;
+        private bool isFirst = true;
 
         private Vector2 startPosition;
         private Vector2 finishPosition;
@@ -20,31 +26,32 @@ namespace GeneticPractice
 
         private Brush DotBrush;
 
-        private Color BGColor;
-        private Color FinishColor = Color.FromArgb(0, 255, 0);
+        private Point lastPoint;
 
-        // TODO: Stop and restart button
+        private Color BGColor;
+        private Color BarrierColor = Color.FromArgb(255, 0, 0);
+        private Color FinishColor = Color.FromArgb(0, 255, 0);
+        private Color StartColor = Color.FromArgb(200, 200, 200);
+
         // TODO: A list for creating populations and choosing brain
-        // TODO: Choosing a start, finish line, and drawing obstacles
+        // TODO: drawing barrier
         // TODO: New Selection, Crossover
 
         public Form1()
         {
             InitializeComponent();
 
-            ChangeTheme('d');
-
             DoubleBuffered = true;
+
+            BGColor = PicBox.BackColor;
 
             buffer = new Bitmap(PicBox.Size.Width, PicBox.Size.Height);
 
             startPosition = new Vector2(PicBox.Size.Width / 2, PicBox.Size.Height - 20);
             finishPosition = new Vector2(PicBox.Size.Width / 2, 20);
 
-            populations = new List<Population>() {
-                new Population(popSize, startPosition, finishPosition, Color.White, SelectionType.BestDot, CrossoverType.None, true),
-                new Population(popSize, startPosition, finishPosition, Color.SkyBlue, SelectionType.Tournament, CrossoverType.Uniform, true)
-            };
+            CreatePopulations();
+            DrawScreen();
 
             moveTimer = new System.Windows.Forms.Timer();
             moveTimer.Interval = tbSpeed.Value;
@@ -54,20 +61,12 @@ namespace GeneticPractice
             };
         }
 
-        private void ChangeTheme(char theme)
+        private void CreatePopulations()
         {
-            switch (theme)
-            {
-                case 'd':
-                    BGColor = Color.DimGray;
-                    break;
-                case 'w':
-                    BGColor = Color.WhiteSmoke;
-                    break;
-                default: break;
-            }
-
-            BackColor = BGColor;
+            populations = new List<Population>() {
+                new Population(popSize, startPosition, finishPosition, Color.White, SelectionType.BestDot, CrossoverType.None, true),
+                new Population(popSize, startPosition, finishPosition, Color.SkyBlue, SelectionType.Tournament, CrossoverType.Uniform, true)
+            };
         }
 
         private void LogicInTick()
@@ -188,6 +187,12 @@ namespace GeneticPractice
 
             g.FillEllipse(new SolidBrush(FinishColor), finishPosition[0] - finishSide / 2, finishPosition[1] - finishSide / 2, finishSide, finishSide);
         }
+        private void DrawStart()
+        {
+            using Graphics g = Graphics.FromImage(buffer);
+
+            g.FillEllipse(new SolidBrush(StartColor), startPosition[0] - startSide / 2, startPosition[1] - startSide / 2, startSide, startSide);
+        }
 
         private void DrawDots(Population pop)
         {
@@ -201,6 +206,15 @@ namespace GeneticPractice
             }
         }
 
+        private void DrawScreen()
+        {
+            ClearBuffer();
+            DrawStart();
+            DrawFinish();
+            PicBox.Image = buffer;
+            PicBox.Refresh();
+        }
+
         private void tbSpeed_Scroll(object sender, EventArgs e)
         {
             moveTimer.Interval = tbSpeed.Value;
@@ -208,26 +222,84 @@ namespace GeneticPractice
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (!moveTimer.Enabled)
-                StartMoveDot();
+            if (isFirst)
+            {
+                isFirst = false;
+                CreatePopulations();
+            }
+            if (moveTimer.Enabled)
+            {
+                btnStart.Text = "Start";
+                moveTimer.Stop();
+            }
+            else
+            {
+                btnStart.Text = "Stop";
+                moveTimer.Start();
+            }
         }
 
-        private void btnStop_Click(object sender, EventArgs e)
+        private void btnRestart_Click(object sender, EventArgs e)
         {
             if (moveTimer.Enabled)
-                StopMoveDot();
+            {
+                btnStart.Text = "Start";
+                moveTimer.Stop();
+            }
+            epoch = 0;
+            EpochLabelUpdate();
+
+            isFirst = true;
+
+            lbMinStep.Text = "Min step:";
+            lbType.Text = "Color:";
+
+            DrawScreen();
         }
 
-        private void StartMoveDot()
+        private void PicBox_MouseDown(object sender, MouseEventArgs e)
         {
-            moveTimer.Start();
-            StepColorLabelUpdate();
+            if (e.Button == MouseButtons.Left)
+            {
+                isDrawing = true;
+                lastPoint = e.Location;
+            }
         }
 
-        private void StopMoveDot()
+        private void PicBox_MouseUp(object sender, MouseEventArgs e)
         {
-            moveTimer.Stop();
-            StepColorLabelUpdate();
+            if (e.Button == MouseButtons.Left)
+                isDrawing = false;
+        }
+
+        private void PicBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrawing)
+            {
+                if (!rbBarrier.Checked)
+                {
+                    ref Vector2 activeEl = ref startPosition;
+
+                    if (rbStart.Checked)
+                        activeEl = ref startPosition;
+                    if (rbFinish.Checked)
+                        activeEl = ref finishPosition;
+
+                    activeEl = new Vector2(e.X, e.Y);
+
+                    activeEl.X = MathF.Max(MathF.Min(e.X, PicBox.Width), 0);
+                    activeEl.Y = MathF.Max(MathF.Min(e.Y, PicBox.Height), 0);
+
+                    DrawScreen();
+                }
+                else
+                {
+                    Graphics g = Graphics.FromImage(buffer);
+                    //g.DrawLine(new Pen(BarrierColor), lastPoint, e.Location);
+                    //lastPoint = e.Location;
+                    //PicBox.Refresh();
+                }
+            }
         }
     }
 }
