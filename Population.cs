@@ -82,6 +82,8 @@ namespace GeneticPractice
             switch (crossover)
             {
                 case CrossoverType.Uniform: CrossoverUniform(); break;
+                case CrossoverType.DoublePoint: Crossover2Point(); break;
+                case CrossoverType.RandPoint: CrossoverRandPoint(); break;
                 case CrossoverType.None: break;
                 default: throw new Exception("Unrealized crossover!");
             }
@@ -164,6 +166,42 @@ namespace GeneticPractice
                         if (random.Next(0, 2) == 1)
                             (dots[i].brain.acceleration[j], dots[i + 1].brain.acceleration[j]) =
                             (dots[i + 1].brain.acceleration[j], dots[i].brain.acceleration[j]);
+        }
+
+        public void Crossover2Point()
+        {
+            int[] points = new int[2] { random.Next(0, dots[0].brain.sizeBrain + 1), 
+                                        random.Next(0, dots[0].brain.sizeBrain + 1)};
+
+            for (int i = 0; i < dots.Count; i += 2)
+                foreach (int j in points)
+                {
+                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j + 1);
+                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j + 1, dots[i + 1].brain.sizeBrain));
+                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j + 1);
+                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j + 1, dots[i + 1].brain.sizeBrain));
+
+                    dots[i].brain.acceleration = new List<Vector2>(temp1);
+                    dots[i + 1].brain.acceleration = new List<Vector2>(temp2);
+                }            
+        }
+
+        public void CrossoverRandPoint()
+        {
+            int countSlicePoint = random.Next(0, dots[0].brain.sizeBrain / 2);
+            int step = dots[0].brain.sizeBrain / countSlicePoint;
+
+            for (int i = 0; i < dots.Count; i += 2)
+                for(int j = 1; j < countSlicePoint; j++)
+                {
+                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j * step - 1);
+                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j * step - 1, dots[i + 1].brain.sizeBrain));
+                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j * step - 1);
+                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j * step - 1, dots[i + 1].brain.sizeBrain));
+
+                    dots[i].brain.acceleration = new List<Vector2>(temp1);
+                    dots[i + 1].brain.acceleration = new List<Vector2>(temp2);
+                }
         }
 
         public void Mutation()

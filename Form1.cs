@@ -69,7 +69,7 @@ namespace GeneticPractice
 
             popin.Location = new Point(0, locY);
             popin.Size = new Size(panPopulations.Width - 17, popin.Height); // (-17) For vertical scrolling, so that the horizontal 
-            popin.SetPopName($"Population{countPop + 1}");                 //        one does not appear
+            popin.tbNamePop.Text = $"Population{countPop + 1}";            //        one does not appear
             
             btnNewPop.Location = new Point(0, btnNewPop.Location.Y + popin.Height + 4);
             countPop++;
@@ -83,14 +83,14 @@ namespace GeneticPractice
             foreach (Control control in panPopulations.Controls)
                 if (control is PopulationInfo popinfo)
                     populations.Add(new Population(
-                        popinfo.GetName(),
-                        popinfo.GetSize(),
+                        popinfo.tbNamePop.Text,
+                        int.Parse(popinfo.tbSize.Text),
                         startPosition,
                         finishPosition,
-                        popinfo.GetColor(),
-                        popinfo.GetSelection(),
-                        popinfo.GetCrossover(),
-                        popinfo.GetElite()));
+                        popinfo.panColor.BackColor,
+                        (SelectionType)popinfo.cbSelection.SelectedIndex,
+                        (CrossoverType)popinfo.cbCrossover.SelectedIndex,
+                        int.Parse(popinfo.tbElite.Text)));
         }
 
         private void LogicInTick()

@@ -16,5 +16,7 @@ namespace GeneticPractice
     {
         None,
         Uniform,
+        DoublePoint,
+        RandPoint,
     }
 }

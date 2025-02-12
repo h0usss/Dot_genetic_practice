@@ -93,39 +93,34 @@ namespace GeneticPractice
                 FillComboBox(cbCrossover, typeof(CrossoverType));
         }
 
-        internal void SetPopName(string str) // Not cool (– . - )
-        {
-            tbNamePop.Text = str;
-        }
+        //internal string GetName()                 IDN what is the best way  (ᓀ ᓀ)
+        //{
+        //    return tbNamePop.Text;
+        //}
 
-        internal string GetName()
-        {
-            return tbNamePop.Text;
-        }
+        //internal Color GetColor()
+        //{
+        //    return panColor.BackColor;
+        //}
 
-        internal Color GetColor()
-        {
-            return panColor.BackColor;
-        }
+        //internal int GetSize()
+        //{
+        //    return int.Parse(tbSize.Text);
+        //}
 
-        internal int GetSize()
-        {
-            return int.Parse(tbSize.Text);
-        }
+        //internal int GetElite()
+        //{
+        //    return int.Parse(tbElite.Text);
+        //}
 
-        internal int GetElite()
-        {
-            return int.Parse(tbElite.Text);
-        }
+        //internal SelectionType GetSelection()
+        //{
+        //    return (SelectionType)cbSelection.SelectedIndex;
+        //}
 
-        internal SelectionType GetSelection()
-        {
-            return (SelectionType)cbSelection.SelectedIndex;
-        }
-
-        internal CrossoverType GetCrossover()
-        {
-            return (CrossoverType)cbCrossover.SelectedIndex;
-        }
+        //internal CrossoverType GetCrossover()
+        //{
+        //    return (CrossoverType)cbCrossover.SelectedIndex;
+        //}
     }
 }
