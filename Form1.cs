@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
@@ -12,7 +13,7 @@ namespace GeneticPractice
         private int startSide = 20;
         private int epoch = 1;
         private int countPop;
-                
+
         private bool isDrawing = false;
         private bool isFirst = true;
 
@@ -22,6 +23,7 @@ namespace GeneticPractice
         private List<Population> populations;
 
         private Bitmap buffer;
+        private Bitmap bufferBarrier;
 
         private System.Windows.Forms.Timer moveTimer;
 
@@ -35,7 +37,6 @@ namespace GeneticPractice
         private Color StartColor = Color.FromArgb(200, 200, 200);
 
         // TODO: drawing barrier
-        // TODO: New Selection, Crossover
 
         public Form1()
         {
@@ -47,6 +48,7 @@ namespace GeneticPractice
             BGColor = PicBox.BackColor;
 
             buffer = new Bitmap(PicBox.Size.Width, PicBox.Size.Height);
+            bufferBarrier = new Bitmap(PicBox.Size.Width, PicBox.Size.Height);
 
             startPosition = new Vector2(PicBox.Size.Width / 2, PicBox.Size.Height - 20);
             finishPosition = new Vector2(PicBox.Size.Width / 2, 20);
@@ -65,16 +67,56 @@ namespace GeneticPractice
         private void btnNewPop_Click(object sender, EventArgs e)
         {
             PopulationInfo popin = new PopulationInfo();
-            int locY = countPop == 0 ? 0 : countPop * popin.Height + 4;
 
-            popin.Location = new Point(0, locY);
-            popin.Size = new Size(panPopulations.Width - 17, popin.Height); // (-17) For vertical scrolling, so that the horizontal 
-            popin.tbNamePop.Text = $"Population{countPop + 1}";            //        one does not appear
-            
+            panPopulations.AutoScrollMinSize = new Size(0, btnNewPop.Location.Y + popin.Height + 4);
+
+            popin.Location = new Point(0, btnNewPop.Location.Y);
+            popin.Size = new Size(btnNewPop.Width, popin.Height);  
+            popin.tbNamePop.Text = $"Population{GetNextIntPop()}";   
+
             btnNewPop.Location = new Point(0, btnNewPop.Location.Y + popin.Height + 4);
             countPop++;
 
             panPopulations.Controls.Add(popin);
+        }
+
+        public void btnDeleteThisPop(PopulationInfo child)
+        {
+            panPopulations.Controls.Remove(child);
+            countPop--;
+
+            int locY = 0;
+            foreach (Control c in panPopulations.Controls)
+                if (c is PopulationInfo popin)
+                {
+                    popin.Location = new Point(0, locY + panPopulations.AutoScrollPosition.Y);
+                    locY += popin.Height + 4;
+                }
+
+            btnNewPop.Location = new Point(0, locY + panPopulations.AutoScrollPosition.Y);
+            panPopulations.AutoScrollMinSize = new Size(0, btnNewPop.Location.Y + child.Height + 4);
+        }
+
+        private int GetNextIntPop()
+        {
+            int max = -9999;
+            bool isFirstBlock = true;
+            foreach (Control c in panPopulations.Controls)
+                //if (c is PopulationInfo popin &&                     IDN what is the best way  
+                //    popin.tbNamePop.Text[0..10] == "Population" &&
+                //    int.TryParse(popin.tbNamePop.Text[10..].Trim(), out int num))
+
+                if (c is PopulationInfo popin)
+                    if (popin.tbNamePop.Text[0..10] == "Population")
+                        if (int.TryParse(popin.tbNamePop.Text[10..].Trim(), out int num))
+                        {
+                            max = Math.Max(max, num);
+                            isFirstBlock = false;
+                        }
+
+            if (isFirstBlock)
+                return 1;
+            return max + 1;
         }
 
         private void CreatePopulations()
@@ -319,7 +361,7 @@ namespace GeneticPractice
                 }
                 else
                 {
-                    Graphics g = Graphics.FromImage(buffer);
+                    Graphics g = Graphics.FromImage(bufferBarrier);
                     //g.DrawLine(new Pen(BarrierColor), lastPoint, e.Location);
                     //lastPoint = e.Location;
                     //PicBox.Refresh();

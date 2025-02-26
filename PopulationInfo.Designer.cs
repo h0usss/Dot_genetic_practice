@@ -39,16 +39,20 @@
             cbCrossover = new ComboBox();
             colorDialog1 = new ColorDialog();
             errorProvider1 = new ErrorProvider(components);
+            label3 = new Label();
+            label4 = new Label();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // tbNamePop
             // 
+            tbNamePop.Cursor = Cursors.Hand;
             tbNamePop.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tbNamePop.Location = new Point(3, 4);
+            tbNamePop.Location = new Point(-1, 4);
             tbNamePop.Margin = new Padding(3, 4, 3, 4);
             tbNamePop.Name = "tbNamePop";
-            tbNamePop.Size = new Size(169, 27);
+            tbNamePop.Size = new Size(145, 27);
             tbNamePop.TabIndex = 0;
             tbNamePop.Text = "Population";
             tbNamePop.TextAlign = HorizontalAlignment.Center;
@@ -56,17 +60,19 @@
             // panColor
             // 
             panColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            panColor.Location = new Point(185, 4);
+            panColor.Cursor = Cursors.Hand;
+            panColor.Location = new Point(157, 4);
             panColor.Margin = new Padding(3, 4, 3, 4);
             panColor.Name = "panColor";
-            panColor.Size = new Size(73, 31);
+            panColor.Size = new Size(41, 27);
             panColor.TabIndex = 1;
             panColor.Click += panColor_Click;
             // 
             // tbSize
             // 
+            tbSize.Cursor = Cursors.Hand;
             tbSize.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tbSize.Location = new Point(51, 40);
+            tbSize.Location = new Point(47, 39);
             tbSize.Margin = new Padding(3, 4, 3, 4);
             tbSize.Name = "tbSize";
             tbSize.Size = new Size(74, 27);
@@ -79,7 +85,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(6, 44);
+            label1.Location = new Point(2, 43);
             label1.Name = "label1";
             label1.Size = new Size(45, 20);
             label1.TabIndex = 3;
@@ -90,7 +96,7 @@
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label2.Location = new Point(138, 44);
+            label2.Location = new Point(141, 43);
             label2.Name = "label2";
             label2.Size = new Size(47, 20);
             label2.TabIndex = 5;
@@ -99,8 +105,9 @@
             // tbElite
             // 
             tbElite.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            tbElite.Cursor = Cursors.Hand;
             tbElite.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tbElite.Location = new Point(185, 40);
+            tbElite.Location = new Point(188, 39);
             tbElite.Margin = new Padding(3, 4, 3, 4);
             tbElite.Name = "tbElite";
             tbElite.Size = new Size(74, 27);
@@ -111,8 +118,9 @@
             // 
             // cbSelection
             // 
+            cbSelection.Cursor = Cursors.Hand;
             cbSelection.FormattingEnabled = true;
-            cbSelection.Location = new Point(6, 79);
+            cbSelection.Location = new Point(2, 94);
             cbSelection.Margin = new Padding(3, 4, 3, 4);
             cbSelection.Name = "cbSelection";
             cbSelection.Size = new Size(119, 28);
@@ -122,8 +130,9 @@
             // cbCrossover
             // 
             cbCrossover.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbCrossover.Cursor = Cursors.Hand;
             cbCrossover.FormattingEnabled = true;
-            cbCrossover.Location = new Point(138, 79);
+            cbCrossover.Location = new Point(141, 94);
             cbCrossover.Margin = new Padding(3, 4, 3, 4);
             cbCrossover.Name = "cbCrossover";
             cbCrossover.Size = new Size(119, 28);
@@ -133,12 +142,48 @@
             // 
             errorProvider1.ContainerControl = this;
             // 
+            // label3
+            // 
+            label3.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label3.Location = new Point(2, 70);
+            label3.Name = "label3";
+            label3.Size = new Size(119, 20);
+            label3.TabIndex = 8;
+            label3.Text = "Selection";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label4
+            // 
+            label4.Font = new Font("Verdana", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label4.Location = new Point(134, 70);
+            label4.Name = "label4";
+            label4.Size = new Size(123, 20);
+            label4.TabIndex = 9;
+            label4.Text = "Crossover";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button1.Cursor = Cursors.Hand;
+            button1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            button1.Location = new Point(214, 4);
+            button1.Name = "button1";
+            button1.Size = new Size(48, 28);
+            button1.TabIndex = 10;
+            button1.Text = "X";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // PopulationInfo
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
             BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(button1);
+            Controls.Add(label4);
+            Controls.Add(label3);
             Controls.Add(cbCrossover);
             Controls.Add(cbSelection);
             Controls.Add(label2);
@@ -149,7 +194,7 @@
             Controls.Add(tbNamePop);
             Margin = new Padding(3, 4, 3, 4);
             Name = "PopulationInfo";
-            Size = new Size(264, 120);
+            Size = new Size(271, 127);
             ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -167,5 +212,8 @@
         internal ComboBox cbCrossover;
         private ColorDialog colorDialog1;
         private ErrorProvider errorProvider1;
+        private Label label3;
+        private Label label4;
+        private Button button1;
     }
 }

@@ -58,9 +58,10 @@
             // 
             PicBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             PicBox.BackColor = Color.Transparent;
-            PicBox.Location = new Point(12, 12);
+            PicBox.Location = new Point(14, 16);
+            PicBox.Margin = new Padding(3, 4, 3, 4);
             PicBox.Name = "PicBox";
-            PicBox.Size = new Size(748, 685);
+            PicBox.Size = new Size(855, 913);
             PicBox.TabIndex = 0;
             PicBox.TabStop = false;
             PicBox.MouseDown += PicBox_MouseDown;
@@ -70,9 +71,9 @@
             // lbEpochCount
             // 
             lbEpochCount.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbEpochCount.Location = new Point(14, 557);
+            lbEpochCount.Location = new Point(16, 743);
             lbEpochCount.Name = "lbEpochCount";
-            lbEpochCount.Size = new Size(234, 23);
+            lbEpochCount.Size = new Size(267, 31);
             lbEpochCount.TabIndex = 1;
             lbEpochCount.Text = "Epoch: 1";
             lbEpochCount.TextAlign = ContentAlignment.MiddleLeft;
@@ -93,26 +94,28 @@
             panel1.Controls.Add(lbType);
             panel1.Controls.Add(lbMinStep);
             panel1.Controls.Add(lbEpochCount);
-            panel1.Location = new Point(769, 12);
+            panel1.Location = new Point(879, 16);
+            panel1.Margin = new Padding(3, 4, 3, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(253, 685);
+            panel1.Size = new Size(302, 913);
             panel1.TabIndex = 2;
             // 
             // lbName
             // 
             lbName.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbName.Location = new Point(14, 617);
+            lbName.Location = new Point(16, 823);
             lbName.Name = "lbName";
-            lbName.Size = new Size(234, 23);
+            lbName.Size = new Size(267, 31);
             lbName.TabIndex = 12;
             lbName.Text = "Name: ";
             lbName.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // panColor
             // 
-            panColor.Location = new Point(74, 647);
+            panColor.Location = new Point(85, 863);
+            panColor.Margin = new Padding(3, 4, 3, 4);
             panColor.Name = "panColor";
-            panColor.Size = new Size(160, 23);
+            panColor.Size = new Size(183, 31);
             panColor.TabIndex = 11;
             // 
             // panPopulations
@@ -120,18 +123,19 @@
             panPopulations.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panPopulations.AutoScroll = true;
             panPopulations.Controls.Add(btnNewPop);
-            panPopulations.Location = new Point(3, 87);
+            panPopulations.Location = new Point(3, 116);
+            panPopulations.Margin = new Padding(3, 4, 3, 4);
             panPopulations.Name = "panPopulations";
-            panPopulations.Size = new Size(247, 338);
+            panPopulations.Size = new Size(295, 451);
             panPopulations.TabIndex = 10;
             // 
             // btnNewPop
             // 
-            btnNewPop.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             btnNewPop.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             btnNewPop.Location = new Point(0, 0);
+            btnNewPop.Margin = new Padding(3, 4, 3, 4);
             btnNewPop.Name = "btnNewPop";
-            btnNewPop.Size = new Size(230, 43);
+            btnNewPop.Size = new Size(271, 57);
             btnNewPop.TabIndex = 0;
             btnNewPop.Text = "+";
             btnNewPop.UseVisualStyleBackColor = true;
@@ -143,9 +147,11 @@
             groupBox1.Controls.Add(rbBarrier);
             groupBox1.Controls.Add(rbFinish);
             groupBox1.Controls.Add(rbStart);
-            groupBox1.Location = new Point(3, 35);
+            groupBox1.Location = new Point(3, 47);
+            groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(247, 73);
+            groupBox1.Padding = new Padding(3, 4, 3, 4);
+            groupBox1.Size = new Size(295, 97);
             groupBox1.TabIndex = 9;
             groupBox1.TabStop = false;
             // 
@@ -153,9 +159,10 @@
             // 
             rbBarrier.AutoSize = true;
             rbBarrier.Font = new Font("Verdana", 12F);
-            rbBarrier.Location = new Point(151, 16);
+            rbBarrier.Location = new Point(173, 21);
+            rbBarrier.Margin = new Padding(3, 4, 3, 4);
             rbBarrier.Name = "rbBarrier";
-            rbBarrier.Size = new Size(80, 22);
+            rbBarrier.Size = new Size(104, 29);
             rbBarrier.TabIndex = 2;
             rbBarrier.TabStop = true;
             rbBarrier.Text = "Barrier";
@@ -165,9 +172,10 @@
             // 
             rbFinish.AutoSize = true;
             rbFinish.Font = new Font("Verdana", 12F);
-            rbFinish.Location = new Point(78, 16);
+            rbFinish.Location = new Point(89, 21);
+            rbFinish.Margin = new Padding(3, 4, 3, 4);
             rbFinish.Name = "rbFinish";
-            rbFinish.Size = new Size(74, 22);
+            rbFinish.Size = new Size(93, 29);
             rbFinish.TabIndex = 1;
             rbFinish.TabStop = true;
             rbFinish.Text = "Finish";
@@ -178,9 +186,10 @@
             rbStart.AutoSize = true;
             rbStart.Checked = true;
             rbStart.Font = new Font("Verdana", 12F);
-            rbStart.Location = new Point(6, 16);
+            rbStart.Location = new Point(7, 21);
+            rbStart.Margin = new Padding(3, 4, 3, 4);
             rbStart.Name = "rbStart";
-            rbStart.Size = new Size(66, 22);
+            rbStart.Size = new Size(84, 29);
             rbStart.TabIndex = 0;
             rbStart.TabStop = true;
             rbStart.Text = "Start";
@@ -189,9 +198,9 @@
             // lbDraw
             // 
             lbDraw.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbDraw.Location = new Point(11, 0);
+            lbDraw.Location = new Point(13, 0);
             lbDraw.Name = "lbDraw";
-            lbDraw.Size = new Size(234, 48);
+            lbDraw.Size = new Size(267, 64);
             lbDraw.TabIndex = 8;
             lbDraw.Text = "Draw";
             lbDraw.TextAlign = ContentAlignment.MiddleLeft;
@@ -200,9 +209,10 @@
             // 
             btnRestart.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnRestart.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnRestart.Location = new Point(123, 431);
+            btnRestart.Location = new Point(154, 575);
+            btnRestart.Margin = new Padding(3, 4, 3, 4);
             btnRestart.Name = "btnRestart";
-            btnRestart.Size = new Size(113, 33);
+            btnRestart.Size = new Size(129, 44);
             btnRestart.TabIndex = 7;
             btnRestart.Text = "Restart";
             btnRestart.UseVisualStyleBackColor = true;
@@ -211,9 +221,10 @@
             // btnStart
             // 
             btnStart.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnStart.Location = new Point(12, 431);
+            btnStart.Location = new Point(14, 575);
+            btnStart.Margin = new Padding(3, 4, 3, 4);
             btnStart.Name = "btnStart";
-            btnStart.Size = new Size(113, 33);
+            btnStart.Size = new Size(129, 44);
             btnStart.TabIndex = 6;
             btnStart.Text = "Start";
             btnStart.UseVisualStyleBackColor = true;
@@ -222,9 +233,9 @@
             // lbSpeed
             // 
             lbSpeed.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbSpeed.Location = new Point(14, 483);
+            lbSpeed.Location = new Point(16, 644);
             lbSpeed.Name = "lbSpeed";
-            lbSpeed.Size = new Size(234, 23);
+            lbSpeed.Size = new Size(267, 31);
             lbSpeed.TabIndex = 5;
             lbSpeed.Text = "Speed ";
             lbSpeed.TextAlign = ContentAlignment.MiddleLeft;
@@ -232,12 +243,13 @@
             // tbSpeed
             // 
             tbSpeed.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tbSpeed.Location = new Point(14, 509);
+            tbSpeed.Location = new Point(16, 679);
+            tbSpeed.Margin = new Padding(3, 4, 3, 4);
             tbSpeed.Maximum = 100;
             tbSpeed.Minimum = 1;
             tbSpeed.Name = "tbSpeed";
             tbSpeed.RightToLeft = RightToLeft.Yes;
-            tbSpeed.Size = new Size(228, 45);
+            tbSpeed.Size = new Size(274, 56);
             tbSpeed.TabIndex = 4;
             tbSpeed.TickFrequency = 10;
             tbSpeed.Value = 25;
@@ -246,9 +258,9 @@
             // lbType
             // 
             lbType.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbType.Location = new Point(14, 647);
+            lbType.Location = new Point(16, 863);
             lbType.Name = "lbType";
-            lbType.Size = new Size(234, 23);
+            lbType.Size = new Size(267, 31);
             lbType.TabIndex = 3;
             lbType.Text = "Color: ";
             lbType.TextAlign = ContentAlignment.MiddleLeft;
@@ -256,22 +268,23 @@
             // lbMinStep
             // 
             lbMinStep.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lbMinStep.Location = new Point(14, 587);
+            lbMinStep.Location = new Point(16, 783);
             lbMinStep.Name = "lbMinStep";
-            lbMinStep.Size = new Size(234, 23);
+            lbMinStep.Size = new Size(289, 31);
             lbMinStep.TabIndex = 2;
             lbMinStep.Text = "Min steps:";
             lbMinStep.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
-            ClientSize = new Size(1034, 709);
+            ClientSize = new Size(1193, 945);
             Controls.Add(panel1);
             Controls.Add(PicBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 4, 3, 4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form1";

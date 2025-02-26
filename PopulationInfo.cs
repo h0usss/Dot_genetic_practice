@@ -10,7 +10,7 @@ namespace GeneticPractice
         {
             InitializeComponent();
 
-            panColor.BackColor = Color.FromArgb(random.Next(100, 256), random.Next(100, 256), random.Next(100, 256));
+            panColor.BackColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
             FillComboBox(cbCrossover, typeof(CrossoverType));
             FillComboBox(cbSelection, typeof(SelectionType));
         }
@@ -91,6 +91,11 @@ namespace GeneticPractice
             }
             else if (cbCrossover.Items.Count == 1)
                 FillComboBox(cbCrossover, typeof(CrossoverType));
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            (ParentForm as Form1)?.btnDeleteThisPop(this);
         }
 
         //internal string GetName()                 IDN what is the best way  (ᓀ ᓀ)

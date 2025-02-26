@@ -170,16 +170,16 @@ namespace GeneticPractice
 
         public void Crossover2Point()
         {
-            int[] points = new int[2] { random.Next(0, dots[0].brain.sizeBrain + 1), 
-                                        random.Next(0, dots[0].brain.sizeBrain + 1)};
+            int[] points = new int[2] { random.Next(5, dots[0].brain.sizeBrain - 1), 
+                                        random.Next(5, dots[0].brain.sizeBrain - 1)};
 
             for (int i = 0; i < dots.Count; i += 2)
                 foreach (int j in points)
                 {
-                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j + 1);
-                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j + 1, dots[i + 1].brain.sizeBrain));
-                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j + 1);
-                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j + 1, dots[i + 1].brain.sizeBrain));
+                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j);
+                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j, dots[i + 1].brain.sizeBrain - j));
+                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j);
+                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j, dots[i + 1].brain.sizeBrain - j));
 
                     dots[i].brain.acceleration = new List<Vector2>(temp1);
                     dots[i + 1].brain.acceleration = new List<Vector2>(temp2);
@@ -188,16 +188,16 @@ namespace GeneticPractice
 
         public void CrossoverRandPoint()
         {
-            int countSlicePoint = random.Next(0, dots[0].brain.sizeBrain / 2);
+            int countSlicePoint = random.Next(5, dots[0].brain.sizeBrain / 2);
             int step = dots[0].brain.sizeBrain / countSlicePoint;
 
             for (int i = 0; i < dots.Count; i += 2)
                 for(int j = 1; j < countSlicePoint; j++)
                 {
-                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j * step - 1);
-                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j * step - 1, dots[i + 1].brain.sizeBrain));
-                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j * step - 1);
-                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j * step - 1, dots[i + 1].brain.sizeBrain));
+                    List<Vector2> temp1 = dots[i].brain.acceleration.GetRange(0, j * step);
+                    temp1.AddRange(dots[i + 1].brain.acceleration.GetRange(j * step, dots[i + 1].brain.sizeBrain - j * step));
+                    List<Vector2> temp2 = dots[i + 1].brain.acceleration.GetRange(0, j * step);
+                    temp2.AddRange(dots[i].brain.acceleration.GetRange(j * step, dots[i + 1].brain.sizeBrain - j * step));
 
                     dots[i].brain.acceleration = new List<Vector2>(temp1);
                     dots[i + 1].brain.acceleration = new List<Vector2>(temp2);
