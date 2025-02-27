@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
+using System.Security.Cryptography.Xml;
 using System.Windows.Forms;
 
 namespace GeneticPractice
@@ -13,8 +14,11 @@ namespace GeneticPractice
         private int startSide = 20;
         private int epoch = 1;
         private int countPop;
+        private int BarrierWidth = 6;
+        private int DotSide = 6;
 
-        private bool isDrawing = false;
+        private bool isLBM = false;
+        private bool isRBM = false;
         private bool isFirst = true;
 
         private Vector2 startPosition;
@@ -32,20 +36,25 @@ namespace GeneticPractice
         private Point lastPoint;
 
         private Color BGColor;
-        private Color BarrierColor = Color.FromArgb(255, 0, 0);
+        private Color BarrierColorMain = Color.FromArgb(0, 0, 0);
         private Color FinishColor = Color.FromArgb(0, 255, 0);
         private Color StartColor = Color.FromArgb(200, 200, 200);
+
+        private Pen PenBarrier;
+        private Pen EraseBarrier;
 
         // TODO: drawing barrier
 
         public Form1()
         {
             InitializeComponent();
+            this.MouseWheel += Form_MouseWheel;
+
 
             countPop = 0;
             DoubleBuffered = true;
 
-            BGColor = PicBox.BackColor;
+            BGColor = this.BackColor;
 
             buffer = new Bitmap(PicBox.Size.Width, PicBox.Size.Height);
             bufferBarrier = new Bitmap(PicBox.Size.Width, PicBox.Size.Height);
@@ -53,14 +62,43 @@ namespace GeneticPractice
             startPosition = new Vector2(PicBox.Size.Width / 2, PicBox.Size.Height - 20);
             finishPosition = new Vector2(PicBox.Size.Width / 2, 20);
 
+            UpdatePen();
+
             CreatePopulations();
-            DrawScreen();
+            DrawStartScreen();
 
             moveTimer = new System.Windows.Forms.Timer();
             moveTimer.Interval = tbSpeed.Value;
             moveTimer.Tick += (s, e) =>
             {
                 LogicInTick();
+            };
+        }
+
+        private void Form_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (rbBarrier.Checked)
+            {
+                if (e.Delta > 0)
+                    BarrierWidth++;
+                if (e.Delta < 0)
+                    BarrierWidth--;
+                UpdatePen();    
+            }
+        }
+
+        private void UpdatePen()
+        {
+            PenBarrier = new Pen(BarrierColorMain, BarrierWidth)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round
+            };
+
+            EraseBarrier = new Pen(BGColor, BarrierWidth)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round
             };
         }
 
@@ -138,21 +176,7 @@ namespace GeneticPractice
         private void LogicInTick()
         {
             if (!IsAllPopDotsDead(populations))
-            {
-                ClearBuffer();
-                DrawFinish();
-
-                foreach (Population population in populations)
-                {
-                    CheckDotStatus(population);
-                    population.Move();
-
-                    DrawDots(population);
-                }
-
-                PicBox.Image = buffer;
-                PicBox.Refresh();
-            }
+                DrawStartScreen();
             else
             {
                 EpochLabelUpdate();
@@ -205,6 +229,9 @@ namespace GeneticPractice
                                                 MathF.Max(MathF.Min(dot.position[1], PicBox.Height - 3), 0)); // with the right and bottom edges clearly
                 }
 
+                if (IsDotIntersectBarrier(dot))
+                    dot.isLive = false;
+
                 if (IsDotInFinish(dot))
                 {
                     dot.isLive = false;
@@ -231,6 +258,47 @@ namespace GeneticPractice
                 pos[1] < (finishPosition[1] + finishSide / 2) &&
                 pos[1] > (finishPosition[1] - finishSide / 2))
                 return true;
+            return false;
+        }
+
+        private bool IsDotIntersectBarrier(Dot dot)
+        {
+            float x1 = dot.position[0];
+            float y1 = dot.position[1];
+            float x2 = dot.prevPosition[0];
+            float y2 = dot.prevPosition[1];
+
+            int f(float x)
+            {
+                if (x2 == x1)
+                    return (int)MathF.Round(y1);
+                return (int)MathF.Round((x - x1) * (y2 - y1) / (x2 - x1) + y1);
+            }
+
+            bool barrierInCirc(int x, int r)
+            {
+                int y = f(x);
+
+                for (int i = x - r; i <= x + r; i++)
+                    for (int j = y - r; j <= y + r; j++)
+                    {
+                        if (i < 0 || i >= bufferBarrier.Width || j < 0 || j >= bufferBarrier.Height)
+                            return false;
+
+                        if ((i - x) * (i - x) + (j - y) * (j - y) <= r * r)
+                            if (bufferBarrier.GetPixel(i, j) == Color.FromArgb(255, 0, 0, 0))
+                                return true;
+                    }
+
+                return false;
+            }
+            int startX = (int) MathF.Min(x1, x2);
+            int endX =   (int) MathF.Max(x1, x2);
+
+            for (int i = startX; i <= endX; i++)
+                if (barrierInCirc(i, DotSide / 2))
+                    return true;
+
             return false;
         }
 
@@ -261,25 +329,38 @@ namespace GeneticPractice
             g.FillEllipse(new SolidBrush(StartColor), startPosition[0] - startSide / 2, startPosition[1] - startSide / 2, startSide, startSide);
         }
 
-        private void DrawDots(Population pop)
+        private void DrawDots()
         {
-            int side = 6;
-            using Graphics g = Graphics.FromImage(buffer);
-
-            for (int i = 0; i < pop.dots.Count; i++)
+            foreach (Population population in populations)
             {
-                Vector2 pos = pop.dots[i].position;
-                g.FillEllipse(pop.dotBrush, pos[0] - side / 2, pos[1] - side / 2, side, side);
+                CheckDotStatus(population);
+                population.Move();
+
+                using Graphics g = Graphics.FromImage(buffer);
+
+                for (int i = 0; i < population.dots.Count; i++)
+                {
+                    Vector2 pos = population.dots[i].position;
+                    g.FillEllipse(population.dotBrush, pos[0] - DotSide / 2, pos[1] - DotSide / 2, DotSide, DotSide);
+                }
             }
         }
 
-        private void DrawScreen()
+        private void DrawStartScreen()
         {
             ClearBuffer();
+            DraBarriers();
             DrawStart();
             DrawFinish();
+            DrawDots();
             PicBox.Image = buffer;
             PicBox.Refresh();
+        }
+
+        private void DraBarriers()
+        {
+            using Graphics g = Graphics.FromImage(buffer);
+            g.DrawImage(bufferBarrier, new Point(0, 0));
         }
 
         private void tbSpeed_Scroll(object sender, EventArgs e)
@@ -321,14 +402,24 @@ namespace GeneticPractice
             lbMinStep.Text = "Min step:";
             lbType.Text = "Color:";
 
-            DrawScreen();
+            DeletePopulation();
+            DrawStartScreen();
         }
 
+        private void DeletePopulation()
+        {
+            populations = new List<Population>();
+        }
         private void PicBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                isDrawing = true;
+                isLBM = true;
+                lastPoint = e.Location;
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                isRBM = true;
                 lastPoint = e.Location;
             }
         }
@@ -336,37 +427,44 @@ namespace GeneticPractice
         private void PicBox_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                isDrawing = false;
+                isLBM = false;
+            if (e.Button == MouseButtons.Right)
+                isRBM = false;
         }
 
         private void PicBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDrawing)
+            if (rbBarrier.Checked)
             {
-                if (!rbBarrier.Checked)
-                {
-                    ref Vector2 activeEl = ref startPosition;
-
-                    if (rbStart.Checked)
-                        activeEl = ref startPosition;
-                    if (rbFinish.Checked)
-                        activeEl = ref finishPosition;
-
-                    activeEl = new Vector2(e.X, e.Y);
-
-                    activeEl.X = MathF.Max(MathF.Min(e.X, PicBox.Width), 0);
-                    activeEl.Y = MathF.Max(MathF.Min(e.Y, PicBox.Height), 0);
-
-                    DrawScreen();
-                }
-                else
-                {
-                    Graphics g = Graphics.FromImage(bufferBarrier);
-                    //g.DrawLine(new Pen(BarrierColor), lastPoint, e.Location);
-                    //lastPoint = e.Location;
-                    //PicBox.Refresh();
-                }
+                if (isLBM)
+                    DrawBarrier(PenBarrier, e);
+                if (isRBM)
+                    DrawBarrier(EraseBarrier, e);
+                DrawStartScreen();
             }
+            else if (isLBM)
+            {
+                ref Vector2 activeEl = ref startPosition;
+
+                if (rbStart.Checked)
+                    activeEl = ref startPosition;
+                if (rbFinish.Checked)
+                    activeEl = ref finishPosition;
+
+                activeEl = new Vector2(e.X, e.Y);
+
+                activeEl.X = MathF.Max(MathF.Min(e.X, PicBox.Width), 0);
+                activeEl.Y = MathF.Max(MathF.Min(e.Y, PicBox.Height), 0);
+
+                DrawStartScreen();
+            }
+        }
+
+        private void DrawBarrier(Pen pen, MouseEventArgs e)
+        {
+            Graphics g = Graphics.FromImage(bufferBarrier);
+            g.DrawLine(pen, lastPoint, e.Location);
+            lastPoint = e.Location;
         }
     }
 }

@@ -159,7 +159,7 @@
             // 
             rbBarrier.AutoSize = true;
             rbBarrier.Font = new Font("Verdana", 12F);
-            rbBarrier.Location = new Point(173, 21);
+            rbBarrier.Location = new Point(190, 21);
             rbBarrier.Margin = new Padding(3, 4, 3, 4);
             rbBarrier.Name = "rbBarrier";
             rbBarrier.Size = new Size(104, 29);
@@ -172,7 +172,7 @@
             // 
             rbFinish.AutoSize = true;
             rbFinish.Font = new Font("Verdana", 12F);
-            rbFinish.Location = new Point(89, 21);
+            rbFinish.Location = new Point(94, 21);
             rbFinish.Margin = new Padding(3, 4, 3, 4);
             rbFinish.Name = "rbFinish";
             rbFinish.Size = new Size(93, 29);

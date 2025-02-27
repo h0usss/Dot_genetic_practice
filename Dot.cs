@@ -10,6 +10,7 @@ namespace GeneticPractice
     internal class Dot
     {
         public Vector2 position {  get; set; }
+        public Vector2 prevPosition {  get; set; }
         private Vector2 direction;
         private Vector2 startPos;
 
@@ -25,6 +26,7 @@ namespace GeneticPractice
             this.startPos = startPos;
 
             position = startPos;
+            prevPosition = startPos;
             direction = Vector2.Zero;
             brain = new Brain();
         }
@@ -32,6 +34,7 @@ namespace GeneticPractice
         public Dot(Vector2 startPos, Brain brain)
         {
             position = startPos;
+            prevPosition = startPos;
             direction = Vector2.Zero;
 
             this.startPos = startPos;
@@ -43,6 +46,7 @@ namespace GeneticPractice
             if (isLive)
                 if (step < brain.sizeBrain)
                 {
+                    prevPosition = position;
                     direction += brain.acceleration[step];
                     position += direction;
                     step++;

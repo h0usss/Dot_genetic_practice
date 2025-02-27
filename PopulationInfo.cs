@@ -10,7 +10,7 @@ namespace GeneticPractice
         {
             InitializeComponent();
 
-            panColor.BackColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
+            panColor.BackColor = Color.FromArgb(random.Next(150, 255), random.Next(150, 255), random.Next(150, 255));
             FillComboBox(cbCrossover, typeof(CrossoverType));
             FillComboBox(cbSelection, typeof(SelectionType));
         }
@@ -22,7 +22,12 @@ namespace GeneticPractice
             colorDialog.AllowFullOpen = true;
 
             if (colorDialog.ShowDialog() == DialogResult.OK)
-                panColor.BackColor = colorDialog.Color;
+            {
+                if (colorDialog.Color == Color.FromArgb(255, 255, 255))
+                    panColor.BackColor = Color.FromArgb(254, 254, 254);
+                else
+                    panColor.BackColor = colorDialog.Color;
+            }
         }
 
         private void tbSize_Validating(object sender, CancelEventArgs e)
